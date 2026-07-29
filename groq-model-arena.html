@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Groq Model Arena</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root{
+    --bg:#F7F5F2;
+    --panel:#FFFFFF;
+    --panel2:#FAF8F5;
+
+    --border:#E7E2DA;
+    --border-strong:#DDD6CC;
+
+    --text:#1A1A1A;
+    --text-muted:#666666;
+    --text-dim:#8B8B8B;
+
+    --amber:#B66A1C;
+    --amber-dim:#F2E5D3;
+
+    --cyan:#4A7A7A;
+    --cyan-dim:#E8F1F1;
+
+    --red:#B3473B;
+    --red-dim:#F6E4E1;
+
+    --green:#357A5B;
+
+    --radius:14px;
+}
+
+*{box-sizing:border-box;}
+body{
+    margin:0;
+    background:#F7F5F2;
+    color:#1A1A1A;
+    font-family:'Inter',sans-serif;
+    font-weight:400;
+    line-height:1.7;
+    padding:60px 32px;
+}
+.wrap{
+    max-width:1280px;
+    margin:auto;
+    padding:0 24px;
+}
+h1,h2,h3{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    letter-spacing:-0.03em;
+}
+.mono{
+    font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+}
+/* header */
+header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px;}
+header h1{
+    font-size:54px;
+    font-weight:600;
+    letter-spacing:-0.05em;
+    line-height:1;
+}header .tag{color:var(--text-muted);font-size:13px;}
+.subhead{
+    color:#666;
+    font-size:18px;
+    line-height:1.8;
+    max-width:650px;
+    margin-top:24px;
+    margin-bottom:70px;
+}
+/* panels */
+.panel{
+    background:transparent;
+    border:none;
+    border-top:1px solid #E5DED4;
+    border-radius:0;
+    padding:48px 0;
+    margin-bottom:0;
+}
+.panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:20px;
+    margin-bottom:32px;
+}
+
+.panel-head h2{
+    margin:0;
+}
+
+.panel-head .hint{
+    white-space:nowrap;
+    font-size:14px;
+}.panel-head .num{
+    display:none;
+}
+.panel-head h2{
+    font-size:22px;
+    font-weight:600;
+}
+.panel-head .hint{color:var(--text-dim);font-size:12px;margin-left:auto;}
+
+label{display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px;}
+input[type=text],
+input[type=password],
+textarea{
+    width:100%;
+    background:#fff;
+    border:1px solid #D9D2C9;
+    border-radius:10px;
+    color:#1A1A1A;
+    padding:12px 14px;
+    font-size:15px;
+    font-family:'Inter',sans-serif;
+}
+input[type=text]:focus,input[type=password]:focus,textarea:focus{border-color:#B66A1C;
+box-shadow:0 0 0 3px rgba(182,106,28,.08);}
+textarea{font-family:'Inter',sans-serif;font-size:14px;resize:vertical;}
+
+.row{display:flex;gap:14px;flex-wrap:wrap;}
+.row > *{flex:1;min-width:200px;}
+
+/* Models */
+.model-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:24px;
+    margin-top:24px;
+}
+
+.model-setup{
+    background:#FFFFFF;
+    border:1px solid #E5DED4;
+    border-radius:14px;
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.model-setup .top{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.model-setup .top input[type=checkbox]{
+    width:18px;
+    height:18px;
+    accent-color:#B66A1C;
+}
+
+.model-setup .name{
+    flex:1;
+    font-size:20px;
+    font-weight:500;
+}
+
+.badge{
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:999px;
+}
+
+.badge.id{
+    display:inline-block;
+    width:fit-content;
+    font-size:12px;
+    padding:6px 10px;
+}
+
+.price-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+
+.price-row input{
+    width:100%;
+    padding:12px;
+    font-size:14px;
+}
+
+.price-row .plabel{
+    margin-bottom:6px;
+    font-size:13px;
+    color:#777;
+}
+/* file drop */
+.dropzone{
+  border:1.5px dashed var(--border-strong);
+  border-radius:10px;
+  padding:22px;
+  text-align:center;
+  color:var(--text-muted);
+  font-size:13px;
+  cursor:pointer;
+  transition:border-color .15s;
+}
+.dropzone:hover,.dropzone.drag{border-color:var(--amber);color:var(--amber);}
+.file-list{margin-top:12px;display:flex;flex-direction:column;gap:6px;}
+.file-item{
+  display:flex;align-items:center;gap:10px;
+  background:var(--panel2);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px;font-size:12px;
+}
+.file-item .fname{flex:1;font-family:'IBM Plex Mono',monospace;}
+.file-item .fsize{color:var(--text-dim);}
+.file-item button{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;}
+.ctx-meter{margin-top:10px;font-size:11px;color:var(--text-dim);}
+.ctx-bar{height:4px;background:var(--panel2);border-radius:2px;margin-top:4px;overflow:hidden;}
+.ctx-bar-fill{height:100%;background:var(--cyan);transition:width .2s;}
+.ctx-bar-fill.warn{background:var(--red);}
+
+/* buttons */
+button.primary{
+    background:#1A1A1A;
+    color:white;
+    border:none;
+    border-radius:999px;
+    padding:15px 30px;
+    font-size:15px;
+    font-weight:500;
+}
+button.primary:disabled{background:var(--border-strong);color:var(--text-dim);cursor:not-allowed;}
+button.ghost{
+    background:transparent;
+    border:1px solid #D8D2CA;
+    color:#444;
+    border-radius:999px;
+}
+button.ghost:hover{border-color:var(--amber);color:var(--amber);}
+
+/* results */
+.results-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
+.result-card{
+    background:#FFFFFF;
+    border:1px solid #ECE6DE;
+    border-radius:14px;
+    padding:24px;
+}
+.result-card.err{border-color:var(--red);}
+.rc-head{display:flex;align-items:center;justify-content:space-between;}
+.rc-head .rname{font-weight:600;font-size:14px;}
+.rc-head .rstatus{font-size:11px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;}
+.rc-body{
+  font-size:13px;line-height:1.55;color:var(--text);
+  max-height:260px;overflow-y:auto;
+  white-space:pre-wrap;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:10px 0;
+}
+.rc-error{color:var(--red);font-size:12px;font-family:'IBM Plex Mono',monospace;}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:11px;}
+.metrics .m{display:flex;justify-content:space-between;color:var(--text-muted);}
+.metrics .m b{color:var(--text);font-family:'IBM Plex Mono',monospace;font-weight:500;}
+.speedbar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:2px;}
+.speedbar-fill{height:100%;background:var(--cyan);}
+.rate-row{display:flex;align-items:center;gap:4px;margin-top:2px;}
+.star{cursor:pointer;font-size:16px;color:var(--border-strong);}
+.star.on{color:var(--amber);}
+.notes-input{
+  width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-size:11px;padding:6px 8px;font-family:'Inter',sans-serif;
+}
+.loading{color:var(--text-dim);font-size:12px;font-family:'IBM Plex Mono',monospace;}
+.dots::after{content:'';animation:dots 1.2s steps(4,end) infinite;}
+@keyframes dots{0%,20%{content:'';}40%{content:'.';}60%{content:'..';}80%,100%{content:'...';}}
+
+/* Leaderboard */
+#leaderboardWrap{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:1000px;       /* Makes the leaderboard stretch */
+    border-collapse:collapse;
+    table-layout:fixed;
+}
+
+th,
+td{
+    padding:18px 12px;
+    text-align:left;
+}
+
+th{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:.08em;
+    color:#8B8B8B;
+    border-bottom:1px solid #E5DED4;
+}
+
+td{
+    font-size:15px;
+    border-bottom:1px solid #EDE7DF;
+}
+
+tbody tr:hover{
+    background:#FCFBF9;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Groq Model Arena</h1>
+  <span class="tag mono">client-side · no data leaves your browser except to Groq</span>
+</header>
+<p class="subhead">Upload context documents, ask one question, and run it against multiple Groq-hosted models side by side. Rate each response to build a running leaderboard across your session.</p>
+
+<!-- STEP 1: API KEY -->
+<div class="panel">
+  <div class="panel-head">
+    <div class="num">1</div>
+    <h2>API key</h2>
+    <span class="hint">console.groq.com/keys · kept only in this tab's memory</span>
+  </div>
+  <input type="password" id="apiKey" placeholder="gsk_..." autocomplete="off">
+</div>
+
+<!-- STEP 2: MODELS -->
+<div class="panel">
+  <div class="panel-head">
+    <div class="num">2</div>
+    <h2>Models to compare</h2>
+    <span class="hint">edit $/1M tokens if you want accurate cost estimates</span>
+  </div>
+  <div class="model-grid" id="modelGrid"></div>
+</div>
+
+<!-- STEP 3: FILES -->
+<div class="panel">
+  <div class="panel-head">
+    <div class="num">3</div>
+    <h2>Context documents</h2>
+    <span class="hint">.txt .md .csv .json — parsed in-browser</span>
+  </div>
+  <div class="dropzone" id="dropzone">
+    Drop files here, or click to browse
+    <input type="file" id="fileInput" multiple style="display:none" accept=".txt,.md,.csv,.json,.log">
+  </div>
+  <div class="file-list" id="fileList"></div>
+  <div class="ctx-meter" id="ctxMeter" style="display:none;">
+    <span id="ctxLabel"></span>
+    <div class="ctx-bar"><div class="ctx-bar-fill" id="ctxBarFill"></div></div>
+  </div>
+</div>
+
+<!-- STEP 4: QUERY -->
+<div class="panel">
+  <div class="panel-head">
+    <div class="num">4</div>
+    <h2>Question</h2>
+    <span class="hint">sent as user message; documents go in the system prompt</span>
+  </div>
+  <textarea id="question" rows="8" placeholder="e.g. Summarize the key risks mentioned across these documents, and list any open action items."></textarea>
+  <div style="margin-top:14px;">
+    <button class="primary" id="runBtn">Run comparison</button>
+  </div>
+  <div id="errorBanner"></div>
+</div>
+
+<!-- RESULTS -->
+<div class="panel" id="resultsPanel" style="display:none;">
+  <div class="panel-head">
+    <div class="num">5</div>
+    <h2>Results</h2>
+    <span class="hint">rate each response to feed the leaderboard</span>
+  </div>
+  <div class="results-grid" id="resultsGrid"></div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="panel">
+  <div class="panel-head">
+    <div class="num">6</div>
+    <h2>Leaderboard</h2>
+    <span class="hint">aggregated across every run this session</span>
+  </div>
+  <div id="leaderboardWrap">
+    <div class="empty-note">Run a comparison to start populating the leaderboard.</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const MODELS = [
+  { id:'llama-3.1-8b-instant', name:'Llama 3.1 8B', deprecated:true, priceIn:0.05, priceOut:0.08 },
+  { id:'qwen/qwen3.6-27b', name:'Qwen 3.6 27B', deprecated:false, priceIn:0.60, priceOut:3.00 },
+  { id:'llama-3.3-70b-versatile', name:'Llama 3.3 70B', deprecated:true, priceIn:0.59, priceOut:0.79 },
+  { id:'openai/gpt-oss-20b', name:'GPT-OSS 20B', deprecated:false, priceIn:0.075, priceOut:0.30 },
+];
+
+const state = {
+  files: [],       // {name, content, chars}
+  history: [],      // {runId, modelId, modelName, latencyMs, promptTokens, completionTokens, cost, rating, error}
+  runCounter: 0,
+};
+
+const CTX_CHAR_LIMIT = 60000;
+
+// ---------- render model setup cards ----------
+const modelGrid = document.getElementById('modelGrid');
+MODELS.forEach(m => {
+  const div = document.createElement('div');
+  div.className = 'model-setup';
+  div.innerHTML = `
+    <div class="top">
+      <input type="checkbox" checked data-mid="${m.id}" class="mtoggle">
+      <span class="name">${m.name}</span>
+      ${m.deprecated ? '<span class="badge dep">retires Aug 16 2026</span>' : ''}
+    </div>
+    <span class="badge id">${m.id}</span>
+    <div class="price-row">
+      <div>
+        <div class="plabel">$/1M in</div>
+        <input type="text" value="${m.priceIn}" data-mid="${m.id}" data-field="priceIn">
+      </div>
+      <div>
+        <div class="plabel">$/1M out</div>
+        <input type="text" value="${m.priceOut}" data-mid="${m.id}" data-field="priceOut">
+      </div>
+    </div>
+  `;
+  modelGrid.appendChild(div);
+});
+modelGrid.addEventListener('change', e => {
+  if (e.target.classList.contains('mtoggle')) {
+    e.target.closest('.model-setup').classList.toggle('off', !e.target.checked);
+  }
+  if (e.target.dataset.field) {
+    const m = MODELS.find(x => x.id === e.target.dataset.mid);
+    const v = parseFloat(e.target.value);
+    if (!isNaN(v)) m[e.target.dataset.field] = v;
+  }
+});
+
+// ---------- file ingestion ----------
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileList = document.getElementById('fileList');
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag');
+  handleFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+function handleFiles(fileListRaw) {
+  Array.from(fileListRaw).forEach(f => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      state.files.push({ name: f.name, content: reader.result, chars: reader.result.length });
+      renderFileList();
+    };
+    reader.onerror = () => {
+      showError(`Couldn't read ${f.name} as text.`);
+    };
+    reader.readAsText(f);
+  });
+}
+
+function renderFileList() {
+  fileList.innerHTML = '';
+  state.files.forEach((f, i) => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `<span class="fname">${f.name}</span><span class="fsize">${f.chars.toLocaleString()} chars</span><button data-i="${i}">&times;</button>`;
+    fileList.appendChild(item);
+  });
+  fileList.querySelectorAll('button').forEach(b => {
+    b.addEventListener('click', () => {
+      state.files.splice(parseInt(b.dataset.i), 1);
+      renderFileList();
+    });
+  });
+  const total = state.files.reduce((s, f) => s + f.chars, 0);
+  const meter = document.getElementById('ctxMeter');
+  if (state.files.length === 0) { meter.style.display = 'none'; return; }
+  meter.style.display = 'block';
+  const pct = Math.min(100, (total / CTX_CHAR_LIMIT) * 100);
+  document.getElementById('ctxBarFill').style.width = pct + '%';
+  document.getElementById('ctxBarFill').classList.toggle('warn', total > CTX_CHAR_LIMIT);
+  document.getElementById('ctxLabel').textContent = total > CTX_CHAR_LIMIT
+    ? `${total.toLocaleString()} chars — over the ${CTX_CHAR_LIMIT.toLocaleString()} char budget, will be truncated`
+    : `${total.toLocaleString()} / ${CTX_CHAR_LIMIT.toLocaleString()} chars used`;
+}
+
+function buildContext() {
+  let combined = state.files.map(f => `--- FILE: ${f.name} ---\n${f.content}`).join('\n\n');
+  let truncated = false;
+  if (combined.length > CTX_CHAR_LIMIT) {
+    combined = combined.slice(0, CTX_CHAR_LIMIT);
+    truncated = true;
+  }
+  return { combined, truncated };
+}
+
+// ---------- error banner ----------
+function showError(msg) {
+  const el = document.getElementById('errorBanner');
+  el.innerHTML = `<div class="error-banner">${msg}</div>`;
+  setTimeout(() => { el.innerHTML = ''; }, 8000);
+}
+
+// ---------- run comparison ----------
+document.getElementById('runBtn').addEventListener('click', runComparison);
+
+async function runComparison() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const question = document.getElementById('question').value.trim();
+  const selected = MODELS.filter(m =>
+    document.querySelector(`.mtoggle[data-mid="${m.id}"]`).checked
+  );
+
+  if (!apiKey) { showError('Enter your Groq API key first.'); return; }
+  if (!question) { showError('Enter a question to test.'); return; }
+  if (selected.length === 0) { showError('Select at least one model.'); return; }
+
+  const { combined, truncated } = buildContext();
+  const systemPrompt = combined
+    ? `You are a helpful assistant answering questions using the documents provided below. Base your answer on this context. If the answer isn't in the context, say so clearly instead of guessing.\n\n<context>\n${combined}\n</context>${truncated ? '\n\n(note: context was truncated to fit the test budget)' : ''}`
+    : `You are a helpful assistant.`;
+
+  const resultsPanel = document.getElementById('resultsPanel');
+  const grid = document.getElementById('resultsGrid');
+  resultsPanel.style.display = 'block';
+  grid.innerHTML = '';
+
+  const runBtn = document.getElementById('runBtn');
+  runBtn.disabled = true;
+  runBtn.textContent = 'Running…';
+
+  selected.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.id = `card-${m.id.replace(/[^a-z0-9]/gi,'_')}`;
+    card.innerHTML = `
+      <div class="rc-head">
+        <span class="rname">${m.name}</span>
+        <span class="rstatus loading">running<span class="dots"></span></span>
+      </div>
+    `;
+    grid.appendChild(card);
+    runOne(m, systemPrompt, question, apiKey, card);
+  });
+
+  runBtn.disabled = false;
+  runBtn.textContent = 'Run comparison';
+}
+
+async function runOne(model, systemPrompt, question, apiKey, card) {
+  const start = performance.now();
+  let result;
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: model.id,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: question }
+        ],
+        temperature: 0.3
+      })
+    });
+    const latencyMs = performance.now() - start;
+    if (!res.ok) {
+      const errText = await res.text();
+      let msg = errText;
+      try { msg = JSON.parse(errText).error?.message || errText; } catch(e){}
+      throw new Error(`${res.status}: ${msg.slice(0,200)}`);
+    }
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content ?? '(empty response)';
+    const usage = data.usage || {};
+    const promptTokens = usage.prompt_tokens ?? null;
+    const completionTokens = usage.completion_tokens ?? null;
+    const cost = (promptTokens != null && completionTokens != null)
+      ? (promptTokens/1e6*model.priceIn) + (completionTokens/1e6*model.priceOut)
+      : null;
+    const tokPerSec = completionTokens != null ? completionTokens / (latencyMs/1000) : null;
+
+    result = { ok:true, text, latencyMs, promptTokens, completionTokens, cost, tokPerSec };
+  } catch (err) {
+    result = { ok:false, error: err.message, latencyMs: performance.now() - start };
+  }
+
+  const runId = ++state.runCounter;
+  state.history.push({
+    runId, modelId: model.id, modelName: model.name,
+    latencyMs: result.latencyMs,
+    promptTokens: result.promptTokens ?? null,
+    completionTokens: result.completionTokens ?? null,
+    cost: result.cost ?? null,
+    tokPerSec: result.tokPerSec ?? null,
+    rating: null,
+    ok: result.ok,
+  });
+
+  renderResultCard(card, model, result, runId);
+  renderLeaderboard();
+}
+
+function renderResultCard(card, model, r, runId) {
+  if (!r.ok) {
+    card.classList.add('err');
+    card.innerHTML = `
+      <div class="rc-head">
+        <span class="rname">${model.name}</span>
+        <span class="rstatus" style="color:var(--red)">failed</span>
+      </div>
+      <div class="rc-error">${r.error}</div>
+    `;
+    return;
+  }
+  const maxSpeed = 250; // rough visual ceiling for the bar, tok/s
+  const speedPct = r.tokPerSec ? Math.min(100, (r.tokPerSec / maxSpeed) * 100) : 0;
+  card.innerHTML = `
+    <div class="rc-head">
+      <span class="rname">${model.name}</span>
+      <span class="rstatus mono">${Math.round(r.latencyMs)} ms</span>
+    </div>
+    <div class="rc-body">${escapeHtml(r.text)}</div>
+    <div class="metrics">
+      <div class="m">Prompt tok <b>${r.promptTokens ?? '—'}</b></div>
+      <div class="m">Completion tok <b>${r.completionTokens ?? '—'}</b></div>
+      <div class="m">Speed <b>${r.tokPerSec ? r.tokPerSec.toFixed(0)+'/s' : '—'}</b></div>
+      <div class="m">Est. cost <b>${r.cost != null ? '$'+r.cost.toFixed(5) : '—'}</b></div>
+    </div>
+    <div class="speedbar"><div class="speedbar-fill" style="width:${speedPct}%"></div></div>
+    <div>
+      <div class="rate-row" data-runid="${runId}">
+        ${[1,2,3,4,5].map(n => `<span class="star" data-n="${n}">&#9733;</span>`).join('')}
+      </div>
+      <input class="notes-input" placeholder="notes on quality (optional)" data-runid="${runId}" style="margin-top:6px;">
+    </div>
+  `;
+  card.querySelectorAll('.star').forEach(star => {
+    star.addEventListener('click', () => {
+      const n = parseInt(star.dataset.n);
+      const entry = state.history.find(h => h.runId === runId);
+      entry.rating = n;
+      card.querySelectorAll('.star').forEach((s,i) => s.classList.toggle('on', i < n));
+      renderLeaderboard();
+    });
+  });
+}
+
+function escapeHtml(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+// ---------- leaderboard ----------
+function renderLeaderboard() {
+  const wrap = document.getElementById('leaderboardWrap');
+  const byModel = {};
+  state.history.forEach(h => {
+    if (!byModel[h.modelId]) byModel[h.modelId] = { name: h.modelName, runs: [] };
+    byModel[h.modelId].runs.push(h);
+  });
+  const ids = Object.keys(byModel);
+  if (ids.length === 0) {
+    wrap.innerHTML = '<div class="empty-note">Run a comparison to start populating the leaderboard.</div>';
+    return;
+  }
+
+  const rows = ids.map(id => {
+    const runs = byModel[id].runs;
+    const ok = runs.filter(r => r.ok);
+    const rated = ok.filter(r => r.rating != null);
+    const avg = (arr, key) => arr.length ? arr.reduce((s,r)=>s+(r[key]||0),0)/arr.length : null;
+    return {
+      id,
+      name: byModel[id].name,
+      count: runs.length,
+      failCount: runs.length - ok.length,
+      avgLatency: avg(ok, 'latencyMs'),
+      avgSpeed: avg(ok.filter(r=>r.tokPerSec), 'tokPerSec'),
+      totalCost: ok.reduce((s,r)=>s+(r.cost||0),0),
+      avgRating: rated.length ? avg(rated, 'rating') : null,
+      ratedCount: rated.length,
+    };
+  });
+
+  // sort: rated models by avg rating desc, then unrated by avg speed desc
+  rows.sort((a,b) => {
+    if (a.avgRating != null && b.avgRating != null) return b.avgRating - a.avgRating;
+    if (a.avgRating != null) return -1;
+    if (b.avgRating != null) return 1;
+    return (b.avgSpeed||0) - (a.avgSpeed||0);
+  });
+
+  let html = `<table><thead><tr>
+    <th>Model</th><th>Runs</th><th>Avg latency</th><th>Avg speed</th><th>Total cost</th><th>Avg rating</th>
+  </tr></thead><tbody>`;
+  rows.forEach((r, i) => {
+    html += `<tr class="${i===0 ? 'leader' : ''}">
+      <td>${i===0 ? '<span class="crown">&#9819;</span>' : ''}${r.name}</td>
+      <td>${r.count}${r.failCount ? ` <span style="color:var(--red)">(${r.failCount} failed)</span>` : ''}</td>
+      <td>${r.avgLatency != null ? Math.round(r.avgLatency)+' ms' : '—'}</td>
+      <td>${r.avgSpeed != null ? r.avgSpeed.toFixed(0)+' tok/s' : '—'}</td>
+      <td>${r.totalCost ? '$'+r.totalCost.toFixed(5) : '—'}</td>
+      <td>${r.avgRating != null ? r.avgRating.toFixed(1)+' ★ ('+r.ratedCount+')' : 'unrated'}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+</script>
+</body>
+</html>
