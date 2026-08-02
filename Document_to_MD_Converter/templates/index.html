@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document to Markdown Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Markdown Converter</h1>
+            <p>Upload your CSV, PDF, Word, or PPT files to instantly convert them to Markdown.</p>
+        </header>
+        
+        <main>
+            <section class="upload-card">
+                <div class="upload-zone">
+                    <input type="file" id="fileInput" multiple accept=".csv,.pdf,.docx,.pptx,.html">
+                </div>
+                <div class="action-row">
+                    <button id="uploadBtn" onclick="uploadFiles()">Convert Files</button>
+                    <div id="statusMessage" class="status-msg"></div>
+                </div>
+            </section>
+
+            <section class="history-section">
+                <div class="history-header-row">
+                    <h2>Conversion History</h2>
+                    <button onclick="loadHistory()" class="btn-refresh">
+                        <span class="icon">↻</span> Refresh
+                    </button>
+                </div>
+                <div id="historyContainer"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+:root {
+    /* Color Palette */
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+
+    /* Status Colors */
+    --success-bg: #d1fae5;
+    --success-text: #065f46;
+    --warning-bg: #fef3c7;
+    --warning-text: #92400e;
+    --danger-bg: #fee2e2;
+    --danger-text: #991b1b;
+    --pending-bg: #f1f5f9;
+    --pending-text: #475569;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--background);
+    color: var(--text-main);
+    margin: 0;
+    padding: 2rem 1rem;
+    line-height: 1.5;
+}
+
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.app-header h1 {
+    font-size: 2.25rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-main);
+}
+
+.app-header p {
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Upload Section */
+.upload-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    margin-bottom: 2rem;
+}
+
+.upload-zone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+    margin-bottom: 1rem;
+}
+
+.upload-zone:hover {
+    border-color: var(--primary);
+    background-color: #eef2ff;
+}
+
+input[type="file"] {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+input[type="file"]::file-selector-button {
+    background: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    margin-right: 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: var(--primary-hover);
+}
+
+.action-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1rem;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.status-msg {
+    font-weight: 500;
+}
+
+/* History Section */
+.history-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.history-header-row h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.btn-refresh {
+    background-color: var(--surface);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.btn-refresh:hover {
+    background-color: var(--background);
+    color: var(--primary);
+}
+
+/* Batch Cards */
+.batch-card {
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.batch-header {
+    background-color: #f1f5f9;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.batch-time {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.file-item:last-child {
+    border-bottom: none;
+}
+
+.file-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-name {
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.file-error {
+    font-size: 0.85rem;
+    color: var(--danger-text);
+    margin-top: 0.25rem;
+}
+
+.file-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Badges */
+.badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge-completed {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+.badge-failed {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+}
+
+.badge-pending {
+    background: var(--pending-bg);
+    color: var(--pending-text);
+}
+
+.badge-processing {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* Action Buttons */
+.btn-batch,
+.btn-small {
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s;
+    display: inline-block;
+}
+
+.btn-batch {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-batch:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-small {
+    background-color: #e2e8f0;
+    color: var(--text-main);
+}
+
+.btn-small:hover {
+    background-color: #cbd5e1;
+}
